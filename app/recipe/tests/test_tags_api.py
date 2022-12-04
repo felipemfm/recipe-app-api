@@ -16,7 +16,7 @@ from recipe.serializers import TagSerializer
 TAGS_URL = reverse('recipe:tag-list')
 
 
-def details_url(tag_id):
+def detail_url(tag_id):
     """Create and return a tag details url."""
     return reverse('recipe:tag-detail', args=[tag_id])
 
@@ -39,7 +39,7 @@ class PublicTagsApiTests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
-class PrivateTagApiTests(TestCase):
+class PrivateTagsApiTests(TestCase):
     """Test authenticated API requests."""
 
     def setUp(self):
@@ -63,7 +63,7 @@ class PrivateTagApiTests(TestCase):
         """Test list of tags is limited to authenticated user."""
         user2 = create_user(email='user2@example.com')
         Tag.objects.create(user=user2, name='Fruity')
-        tag = Tag.objects.create(user=self.user, name='Conform Food')
+        tag = Tag.objects.create(user=self.user, name='Comfort Food')
 
         res = self.client.get(TAGS_URL)
 
@@ -77,7 +77,7 @@ class PrivateTagApiTests(TestCase):
         tag = Tag.objects.create(user=self.user, name='After Dinner')
 
         payload = {'name': 'Dessert'}
-        url = details_url(tag.id)
+        url = detail_url(tag.id)
         res = self.client.patch(url, payload)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
@@ -88,7 +88,7 @@ class PrivateTagApiTests(TestCase):
         """Test deleting a tag."""
         tag = Tag.objects.create(user=self.user, name='Breakfast')
 
-        url = details_url(tag.id)
+        url = detail_url(tag.id)
         res = self.client.delete(url)
 
         self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)
